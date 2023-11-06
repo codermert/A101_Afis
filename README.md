@@ -16,12 +16,12 @@ Proje başlatılmadan önce Node.js ve npm yüklü olmalıdır. Projenin kurulum
    npm install
    node index.js
 
-# Özellikler
-Bu projede aşağıdaki özellikler bulunur:
-
-Aldın Aldın Bu Hafta Brosürü verilerini çeker.
-Aldın Aldın Gelecek Hafta Brosürü verilerini çeker.
-Afisler Haftanın Yıldızları verilerini çeker.
-Büyük Olduğu İçin UCUZ verilerini çeker.
-Afisler Hadi verilerini çeker.
+   # Özellikler
+   Bu projede aşağıdaki özellikler bulunur:
+   
+   Aldın Aldın Bu Hafta Brosürü verilerini çeker.
+   Aldın Aldın Gelecek Hafta Brosürü verilerini çeker.
+   Afisler Haftanın Yıldızları verilerini çeker.
+   Büyük Olduğu İçin UCUZ verilerini çeker.
+   Afisler Hadi verilerini çeker.
 
