@@ -2,7 +2,7 @@ name: A101 Scraper
 
 on:
   schedule:
-    - cron: "0,30 * * * *"
+    - cron: '*/5 * * * *'  # Her 5 dakikada bir çalıştır
 
 jobs:
   build:
