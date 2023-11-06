@@ -1,0 +1,33 @@
+name: A101 Scraper
+
+on:
+  schedule:
+    - cron: "0,30 * * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run scraper and update A101.json
+      run: |
+        node index.js
+        git config --global user.email "codermert@bk.ru"
+        git config --global user.name "codermert"
+        git add A101.json
+        git commit -m "🕰 Afişler güncellendi » @codermertn"
+        git push
+
+    - name: Complete job
+      run: echo "Job is complete"
