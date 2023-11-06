@@ -6,19 +6,24 @@ on:
 jobs:
   fetch-and-update-data:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-      
+
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
         node-version: '14'
-        
+
     - name: Install dependencies
       run: npm install
-      
+
+    - name: Clean npm cache and reinstall
+      run: |
+        npm cache clean --force
+        npm install
+        
     - name: Fetch Data and Update 
       run: |
         node index.mjs  # Script
@@ -27,3 +32,5 @@ jobs:
         git config --global user.name "codermert"
         git diff --cached --exit-code --quiet || git commit -m "🕰 Afişler güncellendi » @codermert"
         git push
+
+    
