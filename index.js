@@ -1,6 +1,6 @@
-const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const fs = require('fs');
+const axios = require('axios');
 
 async function kaynaktanListeye(kaynakKod) {
     const $ = cheerio.load(kaynakKod);
