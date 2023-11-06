@@ -14,8 +14,7 @@ Proje başlatılmadan önce Node.js ve npm yüklü olmalıdır. Projenin kurulum
 
 ```bash
    npm install
-```bash
-node index.js
+   node index.js
 
 # Özellikler
 Bu projede aşağıdaki özellikler bulunur:
