@@ -1,6 +1,8 @@
 import fetch from 'node-fetch';
 import cheerio from 'cheerio';
-import fs from 'fs/promises'; // Use fs/promises for async file operations
+import fs from 'fs/promises';
+
+const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36';
 
 async function kaynaktanListeye(kaynakKod) {
     const $ = cheerio.load(kaynakKod);
@@ -16,7 +18,12 @@ async function a101Brosurler() {
     const brosurler = {};
 
     try {
-        const yanitHafta = await fetch(`${domain}/aldin-aldin-bu-hafta-brosuru`);
+        const yanitHafta = await fetch(`${domain}/aldin-aldin-bu-hafta-brosuru`, {
+            headers: {
+                'User-Agent': userAgent,
+            },
+        });
+
         if (yanitHafta.status !== 200) {
             console.log(await yanitHafta.text());
             brosurler["Bu Hafta"] = [];
@@ -25,7 +32,12 @@ async function a101Brosurler() {
             brosurler["Bu Hafta"] = await kaynaktanListeye(kaynakKodHafta);
         }
 
-        const yanitGelecekHafta = await fetch(`${domain}/aldin-aldin-gelecek-hafta-brosuru`);
+        const yanitGelecekHafta = await fetch(`${domain}/aldin-aldin-gelecek-hafta-brosuru`, {
+            headers: {
+                'User-Agent': userAgent,
+            },
+        });
+
         if (yanitGelecekHafta.status !== 200) {
             console.log(await yanitGelecekHafta.text());
             brosurler["Gelecek Hafta"] = [];
@@ -34,7 +46,12 @@ async function a101Brosurler() {
             brosurler["Gelecek Hafta"] = await kaynaktanListeye(kaynakKodGelecekHafta);
         }
 
-        const yanitYildizlari = await fetch(`${domain}/afisler-haftanin-yildizlari`);
+        const yanitYildizlari = await fetch(`${domain}/afisler-haftanin-yildizlari`, {
+            headers: {
+                'User-Agent': userAgent,
+            },
+        });
+
         if (yanitYildizlari.status !== 200) {
             console.log(await yanitYildizlari.text());
             brosurler["Haftanın Yıldızları"] = [];
@@ -43,7 +60,12 @@ async function a101Brosurler() {
             brosurler["Haftanın Yıldızları"] = await kaynaktanListeye(kaynakKodYildizlari);
         }
 
-        const yanitUcuzAfisler = await fetch(`${domain}/buyuk-oldugu-icin-ucuz-afisler`);
+        const yanitUcuzAfisler = await fetch(`${domain}/buyuk-oldugu-icin-ucuz-afisler`, {
+            headers: {
+                'User-Agent': userAgent,
+            },
+        });
+
         if (yanitUcuzAfisler.status !== 200) {
             console.log(await yanitUcuzAfisler.text());
             brosurler["Büyük olduğu için UCUZ"] = [];
@@ -52,7 +74,12 @@ async function a101Brosurler() {
             brosurler["Büyük olduğu için UCUZ"] = await kaynaktanListeye(kaynakKodUcuzAfisler);
         }
 
-        const yanitHadi = await fetch(`${domain}/afisler-hadi`);
+        const yanitHadi = await fetch(`${domain}/afisler-hadi`, {
+            headers: {
+                'User-Agent': userAgent,
+            },
+        });
+
         if (yanitHadi.status !== 200) {
             console.log(await yanitHadi.text());
             brosurler["Hadi"] = [];
