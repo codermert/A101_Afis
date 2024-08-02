@@ -1,76 +1,52 @@
-const fetch = require('node-fetch');
+const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
 
-async function kaynaktanListeye(kaynakKod) {
-    const $ = cheerio.load(kaynakKod);
-    const resimler = [];
-    $('div.view-area img').each((index, element) => {
-        resimler.push($(element).attr('src'));
-    });
-    return resimler;
-}
+const baseUrl = 'https://www.a101.com.tr';
+const pages = [
+  { url: '/aldin-aldin-bu-hafta-brosuru', key: 'Bu Hafta' },
+  { url: '/aldin-aldin-gelecek-hafta-brosuru', key: 'Gelecek Hafta' },
+  { url: '/afisler-haftanin-yildizlari', key: 'Haftanın Yıldızları' },
+  { url: '/buyuk-oldugu-icin-ucuz-afisler', key: 'Büyük olduğu için UCUZ' }
+];
 
-async function a101Brosurler() {
-    const domain = "https://www.a101.com.tr";
-    const brosurler = {};
+async function getSliderImages() {
+  try {
+    const result = {};
 
-    try {
-        const yanitHafta = await fetch(`${domain}/aldin-aldin-bu-hafta-brosuru`);
-        if (yanitHafta.status !== 200) {
-            console.log(await yanitHafta.text());
-            brosurler["Bu Hafta"] = [];
-        } else {
-            const kaynakKodHafta = await yanitHafta.text();
-            brosurler["Bu Hafta"] = await kaynaktanListeye(kaynakKodHafta);
+    for (const page of pages) {
+      const url = baseUrl + page.url;
+      const response = await axios.get(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
+      });
 
-        const yanitGelecekHafta = await fetch(`${domain}/aldin-aldin-gelecek-hafta-brosuru`);
-        if (yanitGelecekHafta.status !== 200) {
-            console.log(await yanitGelecekHafta.text());
-            brosurler["Gelecek Hafta"] = [];
-        } else {
-            const kaynakKodGelecekHafta = await yanitGelecekHafta.text();
-            brosurler["Gelecek Hafta"] = await kaynaktanListeye(kaynakKodGelecekHafta);
+      const $ = cheerio.load(response.data);
+      
+      result[page.key] = [];
+
+      $('#img-mapper img').each((index, element) => {
+        const src = $(element).attr('src');
+        if (src && src.includes('cdn2.a101.com.tr/dbmk89vnr/CALL/Image/get')) {
+          result[page.key].push(src);
         }
-
-        const yanitYildizlari = await fetch(`${domain}/afisler-haftanin-yildizlari`);
-        if (yanitYildizlari.status !== 200) {
-            console.log(await yanitYildizlari.text());
-            brosurler["Haftanın Yıldızları"] = [];
-        } else {
-            const kaynakKodYildizlari = await yanitYildizlari.text();
-            brosurler["Haftanın Yıldızları"] = await kaynaktanListeye(kaynakKodYildizlari);
-        }
-
-        const yanitUcuzAfisler = await fetch(`${domain}/buyuk-oldugu-icin-ucuz-afisler`);
-        if (yanitUcuzAfisler.status !== 200) {
-            console.log(await yanitUcuzAfisler.text());
-            brosurler["Büyük olduğu için UCUZ"] = [];
-        } else {
-            const kaynakKodUcuzAfisler = await yanitUcuzAfisler.text();
-            brosurler["Büyük olduğu için UCUZ"] = await kaynaktanListeye(kaynakKodUcuzAfisler);
-        }
-
-        const yanitHadi = await fetch(`${domain}/afisler-hadi`);
-        if (yanitHadi.status !== 200) {
-            console.log(await yanitHadi.text());
-            brosurler["Hadi"] = [];
-        } else {
-            const kaynakKodHadi = await yanitHadi.text();
-            brosurler["Hadi"] = await kaynaktanListeye(kaynakKodHadi);
-        }
-
-        if (!Object.values(brosurler).some(list => list.length > 0)) {
-            throw new Error("Bir şeyler ters gitti.");
-        }
-
-        fs.writeFileSync("A101.json", JSON.stringify(brosurler, null, 2), 'utf-8');
-
-        return brosurler;
-    } catch (error) {
-        console.error(error);
+      });
     }
+
+    return JSON.stringify(result, null, 2);
+  } catch (error) {
+    console.error('Hata oluştu:', error);
+    return JSON.stringify({ error: 'Veriler alınamadı' });
+  }
 }
 
-a101Brosurler();
+getSliderImages().then(json => {
+  fs.writeFile('A101.json', json, (err) => {
+    if (err) {
+      console.error('Dosya yazma hatası:', err);
+    } else {
+      console.log('Veriler başarıyla A101.json dosyasına kaydedildi.');
+    }
+  });
+});
