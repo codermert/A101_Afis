@@ -1,0 +1,30 @@
+name: A101
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # Her 5 dakikada bir çalıştır
+
+jobs:
+  fetch-and-update-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Fetch Data 
+      run: |
+        node index.js  # Script
+        git add A101.json
+        git config --global user.email "codermert@bk.ru"
+        git config --global user.name "codermert"
+        git diff --cached --exit-code --quiet || git commit -m "🕰 Veriler auto güncellendi » @codermert"
+        git push
